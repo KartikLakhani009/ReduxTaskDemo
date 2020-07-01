@@ -12,6 +12,9 @@ export const DateSort = (item, order) => {
     item,
     o => {
       var a = moment(o.created_at).format('YYYYMMDD');
+
+      console.log('Data : ', a, +' Dates : ');
+
       return a;
     },
     [orderBy],

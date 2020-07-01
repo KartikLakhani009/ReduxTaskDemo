@@ -6,7 +6,8 @@ export const Fetch_Async_Data = () => {
   return async dispatch => {
     await API('', '', 'get', null)
       .then(json => {
-        // console.log(json);
+        console.log('called Action');
+        console.log(json);
         dispatch({
           type: FETCH_API_DATA,
           payload: json,
