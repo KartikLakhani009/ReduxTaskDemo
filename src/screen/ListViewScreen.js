@@ -16,12 +16,28 @@ import WithLoader from '../hoc/WithLoader';
 import Loader from '../component/Loader';
 import DialogBox from '../component/DialogBox';
 
+import _ from 'lodash';
+
 const ITEM_HEIGHT = 400;
+
+const contains = ({title, author}, query) => {
+  var b = author.toLowerCase();
+  var a = title.toLowerCase();
+
+  console.log('title : ', title, 'b : ', b);
+
+  if (a.includes(query) || b.includes(query)) {
+    return true;
+  }
+
+  return false;
+};
 
 class ListView extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      search_Data: [],
       data: [],
       noCall: 0,
       loading: false,
@@ -29,6 +45,8 @@ class ListView extends Component {
       alert_Visibility: false,
       alert_Data: {},
       text: '',
+      searchError: '',
+      search_req: false,
     };
   }
 
@@ -37,6 +55,7 @@ class ListView extends Component {
       this.props.GetDataAPIDispatch();
       console.log('Called mount ;', this.props.List);
       this.setState({noCall: 1});
+      // this.setState({data: this.props.List.list});
     }
     setTimeout(() => {
       this.setState({loading: false});
@@ -46,6 +65,8 @@ class ListView extends Component {
   onRefresh() {
     this.setState({isFetching: true}, () => {
       this.props.GetDataAPIDispatch();
+      // this.setState({data: this.props.List.list});
+      this.setState({search_req: false});
       this.setState({isFetching: false});
     });
   }
@@ -62,7 +83,7 @@ class ListView extends Component {
   });
 
   // SearchFilterFunction(text) {
-  //   const newData = this.props.List.list.filter(function(item) {
+  //   const newData = this.state.data.filter(function(item) {
   //     console.log('Called Search ', text);
   //     console.log('NEw Data :', newData);
   //     const itemData = item.title ? item.title.toUpperCase() : ''.toUpperCase();
@@ -76,6 +97,50 @@ class ListView extends Component {
   //     text: text,
   //   });
   // }
+
+  // makeRemoteRequest = () => {
+  //   const q = this.state.text.toLowerCase();
+
+  //   if (q.length !== 0) {
+  //     this.setState({search_req: true});
+  //     const results = _.filter(this.state.data, e => {
+  //       return contains(e, q);
+  //     });
+
+  //     console.log('Result : ', results);
+
+  //     this.setState({
+  //       search_Data: results,
+  //     });
+  //   }
+  // };
+
+  SearchFilterFunction = text => {
+    const query = text.toLowerCase();
+    if (query.length !== 0) {
+      this.setState({search_req: true});
+      const results = _.filter(this.props.List.list, e => {
+        return contains(e, query);
+      });
+
+      console.log('Result : ', results);
+
+      this.setState({
+        search_Data: results,
+      });
+    } else {
+      this.setState({search_req: false});
+    }
+
+    // console.log('Fdata L ', fData);
+    this.setState({text: query});
+  };
+
+  CloseSearchFun = () => {
+    this.setState({search_req: false});
+    this.setState({text: ''});
+  };
+
   ListViewItemSeparator = () => {
     //Item sparator view
     return (
@@ -94,6 +159,8 @@ class ListView extends Component {
 
     const {list, Filter_req, temp_Filter} = this.props.List;
 
+    const {alert_Data, searchError, search_req, search_Data} = this.state;
+
     return (
       <View style={styles.container}>
         {this.state.loading == true ? (
@@ -110,13 +177,24 @@ class ListView extends Component {
             APP_NAME
           </Text>
         </View>
-        <TextInput
-          style={styles.textInputStyle}
-          onChangeText={text => this.SearchFilterFunction(text)}
-          value={this.state.text}
-          underlineColorAndroid="transparent"
-          placeholder="Search Here"
-        />
+        <View>
+          <TextInput
+            style={styles.textInputStyle}
+            onChangeText={text => this.SearchFilterFunction(text)}
+            value={this.state.text}
+            underlineColorAndroid="transparent"
+            placeholder="Search Here"
+          />
+          <TouchableOpacity
+            style={{
+              position: 'absolute',
+              right: 10,
+              top: 5,
+            }}
+            onPress={() => this.CloseSearchFun()}>
+            <Text style={{fontSize: 22, fontWeight: 'bold'}}>X</Text>
+          </TouchableOpacity>
+        </View>
         <View style={{flexDirection: 'row'}}>
           <Text style={{justifyContent: 'center', alignItems: 'center'}}>
             Date Sort By {'             '}
@@ -131,7 +209,13 @@ class ListView extends Component {
         </View>
 
         <FlatList
-          data={Filter_req == false ? list : temp_Filter}
+          data={
+            Filter_req == false && search_req == false
+              ? list
+              : search_req == true
+              ? search_Data
+              : temp_Filter
+          }
           extraData={this.state}
           keyExtractor={(item, index) => index.toString()}
           onRefresh={() => this.onRefresh()}
