@@ -6,7 +6,7 @@ mapDispatchToProps = dispatch => ({
 
   GetDataAPIDispatch: () => dispatch(Fetch_Async_Data()),
 
-  GetFilterDate: sortby => dispatch(Filter_By_Date()),
+  GetFilterDate: sortby => dispatch(Filter_By_Date(sortby)),
 });
 
 mapStateToProps = state => {

@@ -8,12 +8,14 @@ export const DateSort = (item, order) => {
 
   const orderBy = order == 'ASC' ? 'asc' : 'desc';
 
+  console.log('Order By : ', orderBy);
+
   const sortedDates = _.orderBy(
     item,
     o => {
-      var a = moment(o.created_at).format('YYYYMMDD');
+      var a = moment(o.created_at).format('LT');
 
-      console.log('Data : ', a, +' Dates : ');
+      console.log('Data : ', a.created_at, +' Dates : ');
 
       return a;
     },

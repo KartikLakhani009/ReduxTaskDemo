@@ -16,6 +16,8 @@ import WithLoader from '../hoc/WithLoader';
 import Loader from '../component/Loader';
 import DialogBox from '../component/DialogBox';
 
+// import Icon from 'react-native-vector-icons/FontAwesome5';
+
 import _ from 'lodash';
 
 const ITEM_HEIGHT = 400;
@@ -82,39 +84,6 @@ class ListView extends Component {
     index,
   });
 
-  // SearchFilterFunction(text) {
-  //   const newData = this.state.data.filter(function(item) {
-  //     console.log('Called Search ', text);
-  //     console.log('NEw Data :', newData);
-  //     const itemData = item.title ? item.title.toUpperCase() : ''.toUpperCase();
-  //     const textData = text.toUpperCase();
-  //     return itemData.indexOf(textData) > -1;
-  //   });
-  //   this.setState({
-  //     //setting the filtered newData on datasource
-  //     //After setting the data it will automatically re-render the view
-  //     dataSource: newData,
-  //     text: text,
-  //   });
-  // }
-
-  // makeRemoteRequest = () => {
-  //   const q = this.state.text.toLowerCase();
-
-  //   if (q.length !== 0) {
-  //     this.setState({search_req: true});
-  //     const results = _.filter(this.state.data, e => {
-  //       return contains(e, q);
-  //     });
-
-  //     console.log('Result : ', results);
-
-  //     this.setState({
-  //       search_Data: results,
-  //     });
-  //   }
-  // };
-
   SearchFilterFunction = text => {
     const query = text.toLowerCase();
     if (query.length !== 0) {
@@ -137,7 +106,8 @@ class ListView extends Component {
   };
 
   CloseSearchFun = () => {
-    this.setState({search_req: false});
+    this.setState({search_req: false, Filter_req: false});
+
     this.setState({text: ''});
   };
 
@@ -152,6 +122,16 @@ class ListView extends Component {
         }}
       />
     );
+  };
+
+  DateSort = type => {
+    var data = this.props.GetFilterDate(type);
+    console.log('Data From Sort :  ', data);
+    this.setState({
+      temp_Filter: data,
+      Filter_req: true,
+    });
+    // return null;
   };
 
   render() {
@@ -197,15 +177,22 @@ class ListView extends Component {
         </View>
         <View style={{flexDirection: 'row'}}>
           <Text style={{justifyContent: 'center', alignItems: 'center'}}>
-            Date Sort By {'             '}
+            Sort
           </Text>
 
-          <Button title="ASC" onPress={() => this.props.GetFilterDate('ASC')} />
+          <Button title="ASC" onPress={() => this.DateSort('ASC')} />
           <Text>{'             '}</Text>
-          <Button
-            title="DEAS"
-            onPress={() => this.props.GetFilterDate('DESC')}
-          />
+          <Button title="DEAS" onPress={() => this.DateSort('DESC')} />
+
+          {/* <TouchableOpacity style={{flexDirection: 'row'}}>
+            <Text>Date</Text>
+            <Icon name="sort-amount-down" size={25} />
+          </TouchableOpacity>
+
+          <TouchableOpacity style={{flexDirection: 'row'}}>
+            <Text>Date</Text>
+            <Icon name="sort-amount-up" size={25} />
+          </TouchableOpacity> */}
         </View>
 
         <FlatList
@@ -259,9 +246,9 @@ class ListView extends Component {
             </TouchableOpacity>
           )}
           getItemLayout={this.getItemLayout}
-          initialNumToRender={2}
+          initialNumToRender={4}
           maxToRenderPerBatch={4}
-          windowSize={4}
+          windowSize={10}
           ItemSeparatorComponent={this.ListViewItemSeparator}
           enableEmptySections={true}
         />
