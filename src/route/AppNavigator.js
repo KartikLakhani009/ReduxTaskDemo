@@ -16,6 +16,7 @@ const AuthStack = createStackNavigator(
   },
   {
     initialRouteName: 'ListView',
+    // initialRouteName: 'WelcomeScreen',
     headerMode: 'none',
   },
 );

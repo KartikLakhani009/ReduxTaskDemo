@@ -16,9 +16,12 @@ import WithLoader from '../hoc/WithLoader';
 import Loader from '../component/Loader';
 import DialogBox from '../component/DialogBox';
 
-// import Icon from 'react-native-vector-icons/FontAwesome5';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 import _ from 'lodash';
+
+import moment from 'moment';
+import AppStyle from '../Config/AppStyle';
 
 const ITEM_HEIGHT = 400;
 
@@ -176,23 +179,48 @@ class ListView extends Component {
           </TouchableOpacity>
         </View>
         <View style={{flexDirection: 'row'}}>
-          <Text style={{justifyContent: 'center', alignItems: 'center'}}>
-            Sort
+          <Text
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              top: 5,
+              // left: 10,
+            }}>
+            {'    Sort        '}
           </Text>
 
-          <Button title="ASC" onPress={() => this.DateSort('ASC')} />
+          {/* <Button title="ASC" onPress={() => this.DateSort('ASC')} />
           <Text>{'             '}</Text>
-          <Button title="DEAS" onPress={() => this.DateSort('DESC')} />
+          <Button title="DEAS" onPress={() => this.DateSort('DESC')} /> */}
 
-          {/* <TouchableOpacity style={{flexDirection: 'row'}}>
+          <TouchableOpacity
+            style={{
+              flexDirection: 'row',
+              width: 130,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+            onPress={() => this.DateSort('ASC')}>
             <Text>Date</Text>
-            <Icon name="sort-amount-down" size={25} />
+            <Icon name="sort-asc" style={{top: 5, marginLeft: 10}} size={25} />
           </TouchableOpacity>
 
-          <TouchableOpacity style={{flexDirection: 'row'}}>
+          <TouchableOpacity
+            style={{
+              flexDirection: 'row',
+              width: 130,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+            onPress={() => this.DateSort('DESC')}>
             <Text>Date</Text>
-            <Icon name="sort-amount-up" size={25} />
-          </TouchableOpacity> */}
+            <Icon
+              name="sort-desc"
+              style={{top: -5, marginLeft: 10}}
+              size={25}
+              color="#000"
+            />
+          </TouchableOpacity>
         </View>
 
         <FlatList
@@ -212,44 +240,70 @@ class ListView extends Component {
               style={{
                 minWidth: 150,
                 // height: 250,
-                padding: 10,
+                margin: 10,
                 // alignItems: 'center',
                 // justifyContent: 'center',
-                backgroundColor: '#2AC062',
+                // marginBottom: 10,
+                backgroundColor: '#fff',
                 display: 'flex',
                 borderRadius: 5,
-                shadowColor: '#2AC062',
+                shadowColor: '#fff',
                 shadowOpacity: 0.4,
                 shadowRadius: 20,
                 shadowOffset: {height: 10, width: 5},
-                borderBottomColor: '#fff',
-                borderBottomWidth: 2,
+                borderBottomColor: '#000',
+                // borderBottomWidth: 2,
               }}
               onPress={() => this.OpenBox(item)}>
-              <Text style={{color: 'white', fontSize: 20}}>
-                {'Title : ' + item.title}
-              </Text>
-              <Text style={{color: 'white', marginTop: 10, fontSize: 18}}>
-                {'Author : ' + item.author}
-              </Text>
-              <Text style={{color: 'white', marginTop: 10, fontSize: 18}}>
-                {'Date : ' + item.created_at}
+              <Text
+                style={{
+                  color: AppStyle.COLOR.windowsBlue,
+                  fontSize: 20,
+                  margin: 5,
+                  fontWeight: 'bold',
+                }}>
+                {item.title}
               </Text>
               <Text
-                style={{color: 'white', marginTop: 10, fontSize: 16}}
-                onPress={() => {
-                  //on clicking we are going to open the URL using Linking
-                  Linking.openURL(item.url);
+                style={{
+                  color: AppStyle.COLOR.windowsBlue,
+                  // marginTop: 10,
+                  fontSize: 18,
+                  // position: 'absolute',
+                  left: '55%',
+                  // top: 60,
                 }}>
-                {'Link : ' + item.url}
+                {' - By  : ' + item.author}
               </Text>
+              {/* <Text>{'\n'}</Text> */}
+              <View style={{flexDirection: 'row', margin: 5, marginTop: 10}}>
+                <Text style={{fontSize: 14}}>
+                  {moment(item.created_at).format('LLL')}
+                </Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    //on clicking we are going to open the URL using Linking
+                    Linking.openURL(item.url);
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      left: '150%',
+                      borderWidth: 1,
+                      marginBottom: 10,
+                      // backgroundColor: AppStyle.COLOR
+                    }}>
+                    {' Web View'}
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </TouchableOpacity>
           )}
           getItemLayout={this.getItemLayout}
           initialNumToRender={4}
           maxToRenderPerBatch={4}
           windowSize={10}
-          ItemSeparatorComponent={this.ListViewItemSeparator}
+          // ItemSeparatorComponent={this.ListViewItemSeparator}
           enableEmptySections={true}
         />
 
